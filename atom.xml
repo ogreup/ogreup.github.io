@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Ogreup&#39;s TechNote</title>
+  <subtitle>一个软件攻城狮的所做所想，以及踩坑经验分享</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://ogreup.github.io/"/>
+  <updated>2017-09-06T07:18:22.470Z</updated>
+  <id>https://ogreup.github.io/</id>
+  
+  <author>
+    <name>Paul CHEN</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>git无法使用socks5代理</title>
+    <link href="https://ogreup.github.io/2017/09/06/git%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8socks5%E4%BB%A3%E7%90%86/"/>
+    <id>https://ogreup.github.io/2017/09/06/git无法使用socks5代理/</id>
+    <published>2017-09-06T08:12:09.000Z</published>
+    <updated>2017-09-06T07:18:22.470Z</updated>
+    
+    <content type="html"><![CDATA[<p>不知何故，在Win7下使用git通过shadowsocks代理克隆github.com上的仓库总是失败，而网上也没有找到类似问题。百思不得姐。<br><a id="more"></a></p>
+<h2 id="网络环境"><a href="#网络环境" class="headerlink" title="网络环境"></a>网络环境</h2><p>通过宾馆的Wifi连接Internet，网络正常（可以访问baidu）；本地的shadowsocks代理服务正常（默认的1080端口），工作正常（可以访问google）。</p>
+<h2 id="git代理配置"><a href="#git代理配置" class="headerlink" title="git代理配置"></a>git代理配置</h2><p>尝试了以下两种代理配置，均无法从github.com克隆仓库。</p>
+<h3 id="方式1：指定仅对特定网站（github-com）使用代理"><a href="#方式1：指定仅对特定网站（github-com）使用代理" class="headerlink" title="方式1：指定仅对特定网站（github.com）使用代理"></a>方式1：指定仅对特定网站（github.com）使用代理</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git config --<span class="keyword">global</span> http.http<span class="variable">s:</span>//github.<span class="keyword">com</span>.proxy <span class="string">'socks5://127.0.0.1'</span></div></pre></td></tr></table></figure>
+<p>设置后，~/.gitconfig配置文件中有关代理部分的内容如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[<span class="meta">http <span class="meta-string">"https://github.com"</span></span>]</div><div class="line">        proxy = socks5:<span class="comment">//127.0.0.1:1080</span></div></pre></td></tr></table></figure>
+<p>尝试克隆qtcreator仓库，结果如下：</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">$</span> git clone https:<span class="comment">//github.com/qt-creator/qt-creator.git</span></div><div class="line"><span class="function"><span class="title">Cloning</span></span> into <span class="string">'qt-creator'</span>...</div><div class="line">fatal: unable to access <span class="string">'https://github.com/qt-creator/qt-creator.git/'</span>: SSL: <span class="keyword">no</span> alternative certificate subject name matches target host name <span class="string">'github.com'</span></div></pre></td></tr></table></figure>
+<h3 id="方式2：指定全局使用代理"><a href="#方式2：指定全局使用代理" class="headerlink" title="方式2：指定全局使用代理"></a>方式2：指定全局使用代理</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> git config --global http.proxy <span class="string">'socks5://127.0.0.1:1080'</span></span></div><div class="line"><span class="meta">$</span><span class="bash"> git config --global https.proxy <span class="string">'socks5://127.0.0.1:1080'</span></span></div></pre></td></tr></table></figure>
+<p>设置后，~/.gitconfig配置文件中有关代理部分的内容如下：</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">[http]</span></div><div class="line">        proxy = socks5://<span class="number">127.0.0.1:1080</span></div><div class="line"><span class="string">[https]</span></div><div class="line">        proxy = socks5://<span class="number">127.0.0.1:1080</span></div></pre></td></tr></table></figure>
+<p>该配置的测试结果与之前相同。</p>
+<p>若将socks5代理转为http代理（使用privoxy-3.0.26），git使用代理正常，克隆成功。另外，测试了一下关闭<code>http.sslVerify</code>选项（通过git config设置为false），似乎无效果。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;不知何故，在Win7下使用git通过shadowsocks代理克隆github.com上的仓库总是失败，而网上也没有找到类似问题。百思不得姐。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+      <category term="git" scheme="https://ogreup.github.io/tags/git/"/>
+    
+      <category term="ss" scheme="https://ogreup.github.io/tags/ss/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Thinkpad T460安装Windows7</title>
+    <link href="https://ogreup.github.io/2017/08/20/thinkpad-t460%E5%AE%89%E8%A3%85windows7/"/>
+    <id>https://ogreup.github.io/2017/08/20/thinkpad-t460安装windows7/</id>
+    <published>2017-08-20T13:42:09.000Z</published>
+    <updated>2017-09-06T07:19:40.616Z</updated>
+    
+    <content type="html"><![CDATA[<p>从什么时候起，Win7已经太老了？<br><a id="more"></a></p>
+<p>thinkpad t460，分辨率1024x768的乞丐版，没有光驱，打算安装64位版本的Win7。但手头有一个USB-CDROM（翻了一下，CD包里各式各样的系统盘、工具盘，都是是电脑吊丝的必备），找了一圈居然没有合适的安装盘（只有32位版本，以及一张64位的E文版）。手头还有几个闲置的U盘，于是抄起一只，按照网上的说明制作usb启动安装盘（此时我还在运行Fedora 25）：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">umount /dev/sdb1</div><div class="line">sudo dd <span class="attribute">bs</span>=4M <span class="attribute">if</span>=/path/of/win7.iso <span class="attribute">of</span>=/dev/sdb1</div></pre></td></tr></table></figure>
+<p>这个命令花了比我想象的要长得多的时间才执行完毕，看统计数据写入速度不到4M/s,win7系统盘的大小约3.7GB，算下来约摸15min。测试发现并不好使，通过F12指定从USB启动时没有任何反应。由于是第一次使用dd命令创建usb启动盘，不是很有信心，于是改用USB光驱测试，发现居然也不行。进入BIOS（准确的说，现在都是UEFI了），修改了<code>Boot</code>页中一个选项，使支持Legacy方式的启动，终于通过USB光驱成功启动了。</p>
+<p>进入安装界面后，不久又卡壳了，安装程序抱怨“找不到CD/DVD的设备驱动”。网上说的各种方法，包括重插拔USB、更换USB端口等都试过一遍，不好使（我估计那些更换端口能够解决问题的情况是因为机器的USB端口不全是3.0的，换到2.0的端口就可以了，但t460应该全是3.0的端口；还有一些说可能是光盘源问题的，数据下载不完整问题的，觉得没啥道理，未予理会）。通过Shift+F10打开命令提示符（以前不知道还有这个功能），输入xxx命令证实了插入的USB光驱没有被识别。发现机器自带SD卡读卡器接口，从lenovo网站下载了对应USB驱动，解压好后放在SD卡，再安装也不行：读卡器也没有被系统识别。又上网搜了一下，终于找到一个靠谱的帖子，同时也和我的猜测一致，就是Win7系统盘中的PE没有usb3.0的驱动，而通过intel提供的一个工具可以把所需驱动集成到已经制作好的usb启动盘里去（真是太贴心了）。于是如法炮制，使用Rufus制作USB启动盘，并添加usb3.0驱动，终于可以正常安装了。</p>
+<p>系统装完以后发现又尴尬了：不能识别USB控制器、SD读卡器、以太网控制器！除了键盘，没有什么可以向这台机器输入数据（当然也不可能有串口，即使有、即使系统能够识别，似乎也没有什么卵用——Win7系统已经不再自带超级终端这个小程序了），这真是太尴尬了！还好手头有一张比较新的Linux系统盘（Fedora 25），通过USB光驱启动后发现可以live模式直接运行。从启动过程输出的信息看，这货应该是把机器中的各种硬件都识别出来了，谢天谢地！在Fedora live模式下把之前已经下载好的t460 usb 3.0驱动程序拷进机器（还好支持直接写ntfs格式分区），终于打通了数据输入的通道。。。</p>
+<p>太不容易了。Win7已经太老了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;从什么时候起，Win7已经太老了？&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>numpy中loadtxt/genfromtxt的一些不一致性</title>
+    <link href="https://ogreup.github.io/2017/07/07/numpy%E4%B8%ADloadtxt-genfromtxt%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%8D%E4%B8%80%E8%87%B4%E6%80%A7/"/>
+    <id>https://ogreup.github.io/2017/07/07/numpy中loadtxt-genfromtxt的一些不一致性/</id>
+    <published>2017-07-07T08:19:00.000Z</published>
+    <updated>2017-09-06T07:31:55.342Z</updated>
+    
+    <content type="html"><![CDATA[<p>两个函数做类似的事情，调用时的参数也基本一致，并且文档中也声称loadtxt是genfromtxt的简化版本，但实际测试发现两者还是有一些不一致，比较讨厌。<br><a id="more"></a></p>
+<p>平台:</p>
+<ul>
+<li>Python 2.7.13 64bit<ul>
+<li>numpy 1.12.1</li>
+<li>matplotlib 2.0.0</li>
+</ul>
+</li>
+<li>Windows7 64bit</li>
+</ul>
+<h2 id="初级的数据解析加载方式"><a href="#初级的数据解析加载方式" class="headerlink" title="初级的数据解析加载方式"></a>初级的数据解析加载方式</h2><p>用matplotlib实现自动化的图标生成，常常会遇到横轴为日期/时间的情况，最初的做法是自己写一个函数，通常叫做<code>loadXXXData</code>之类，逐行读取并解析，把时间字符串转换为自当日零时起开始的毫秒数，大致这样：<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">def loadXXXData(filepath):</div><div class="line">	f = <span class="built_in">open</span>(filepath, <span class="string">'r'</span>)</div><div class="line">	f.readline()</div><div class="line">	</div><div class="line">	t, v = [], []</div><div class="line">	</div><div class="line">	<span class="keyword">for</span> <span class="built_in">line</span> <span class="keyword">in</span> f.readlines():</div><div class="line">		fds = <span class="built_in">line</span>.<span class="built_in">split</span>()</div><div class="line">		h, m, s = [float(x) <span class="keyword">for</span> x <span class="keyword">in</span> fds[<span class="number">0</span>].<span class="built_in">split</span>(<span class="string">':'</span>)]</div><div class="line">		<span class="built_in">tick</span> = (h * <span class="number">3600</span> + m * <span class="number">60</span> + s) * <span class="number">1000</span></div><div class="line">		t.appen(<span class="built_in">tick</span>)</div><div class="line">		v.append(float(fds[<span class="number">1</span>]))</div><div class="line">	</div><div class="line">	<span class="literal">return</span> t, v</div></pre></td></tr></table></figure></p>
+<p>对于不同格式（大同小异）的数据文件，不光写了大量类似这样重复的代码，另一个问题是，为了使得到的图标好看点，还得在绘图时重新生成X轴的刻度标签(<code>set_xticks()</code>, <code>set_xticklabels</code>），非常之繁琐。后来尝试做了一个比较通用的小软件，用PyQt4实现前端，支持平时常用格式的时间字符串，可以选择载入哪些列的数据，等等，受到使用环境的一些限制（可能没有PyQt，没有网络不方便版本控制），后来也懒得维护更新了。</p>
+<h2 id="使用numpy-loadtxt"><a href="#使用numpy-loadtxt" class="headerlink" title="使用numpy::loadtxt"></a>使用numpy::loadtxt</h2><p>使用numpy::loadtxt，实际上实现了之前通用版本曲线生成功能，代码类似这样：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">hms2tick</span><span class="params">(hms)</span>:</span></div><div class="line">	h, m, s = [float(x) <span class="keyword">for</span> x <span class="keyword">in</span> hms.split(<span class="string">':'</span>)]</div><div class="line">	<span class="keyword">return</span> (h * <span class="number">3600</span> + m * <span class="number">60</span> + s) * <span class="number">1000</span></div><div class="line">	</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadXXXData</span><span class="params">(filepath)</span>:</span></div><div class="line">	t, v = np.loadtxt(filepath, converters=&#123;<span class="number">0</span>: hms2tick&#125;, unpack=<span class="keyword">True</span>&#125;)</div><div class="line">	<span class="keyword">return</span> t, v</div></pre></td></tr></table></figure></p>
+<p>但还是不能解决自动在X轴显示时间的问题：loadtxt要求每一列数据都能够转换为float格式。</p>
+<h2 id="使用numpy-genfromtxt"><a href="#使用numpy-genfromtxt" class="headerlink" title="使用numpy::genfromtxt"></a>使用numpy::genfromtxt</h2><p>使用numpy::genfromtxt，可以支持把时间字符串转换为datetime.datetime，并且直接在mpl中绘图，但发现与loadtxt的效果存在一些不一致，虽然numpy文档中声称loadtxt是genfromtxt的简化（特化）版本：</p>
+<blockquote>
+<p><code>&gt;&gt;</code> help(np.loadtxt)<br>Help on function loadtxt in module numpy.lib.npyio:</p>
+<h2 id="See-Also"><a href="#See-Also" class="headerlink" title="   See Also"></a>   See Also</h2><p>   numpy.loadtxt : equivalent function when no data is missing.</p>
+</blockquote>
+<p>以下是我用来测试两者行为不一致性的代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</div><div class="line"><span class="keyword">import</span> matplotlib.dates <span class="keyword">as</span> mdates</div><div class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</div><div class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">myTest</span><span class="params">(filepath)</span>:</span></div><div class="line"></div><div class="line">    <span class="comment"># TypeError: float() argument must be a string or a number</span></div><div class="line">    <span class="comment"># t, v = np.loadtxt(filepath, \</span></div><div class="line">        <span class="comment"># converters=&#123;0: lambda x: datetime.strptime(x, '%H:%M:%S.%f').time()&#125;, \</span></div><div class="line">        <span class="comment"># unpack=True)</span></div><div class="line">        </div><div class="line">    <span class="comment"># TypeError: float() argument must be a string or a number</span></div><div class="line">    <span class="comment"># datetime object has toordinal() method, while datetime.time object have not</span></div><div class="line">    <span class="comment"># data = np.genfromtxt(filepath, \</span></div><div class="line">        <span class="comment"># converters=&#123;0: lambda x: datetime.strptime(x, '%H:%M:%S.%f').time()&#125;)</span></div><div class="line">           </div><div class="line">    <span class="comment"># unpack behaves differently with np.loadtxt / np.genfromtxt</span></div><div class="line">    <span class="comment"># t, v = np.genfromtxt(filepath, \</span></div><div class="line">        <span class="comment"># converters=&#123;0: lambda x: datetime.strptime(x, '%H:%M:%S.%f')&#125;, \</span></div><div class="line">        <span class="comment"># unpack=True)</span></div><div class="line">        </div><div class="line">    data = np.genfromtxt(filepath, \</div><div class="line">        converters=&#123;<span class="number">0</span>: <span class="keyword">lambda</span> x: datetime.strptime(x, <span class="string">'%H:%M:%S.%f'</span>)&#125;)</div><div class="line">    t = data[<span class="string">'f0'</span>]</div><div class="line">    v = data[<span class="string">'f1'</span>]</div><div class="line"></div><div class="line">    fig = plt.figure()</div><div class="line">    ax = fig.add_subplot(<span class="number">111</span>)</div><div class="line">    ax.plot(t, v)</div><div class="line">    </div><div class="line">    ax.xaxis.set_major_formatter(mdates.DateFormatter(<span class="string">'%H:%M:%S'</span>))</div><div class="line">    <span class="comment">#ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=10))</span></div><div class="line">    </div><div class="line">    plt.show()</div><div class="line">    </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    <span class="keyword">import</span> sys</div><div class="line">    myTest(sys.argv[<span class="number">1</span>])</div></pre></td></tr></table></figure></p>
+<h2 id="两者的差异"><a href="#两者的差异" class="headerlink" title="两者的差异"></a>两者的差异</h2><ul>
+<li>genfromtxt可以加载时间字符串为datetime.datetime对象，但loadtxt要求列数据必须能够转换为float</li>
+<li>loadtxt函数传入<code>unpack=True</code>时，返回各个列数据的数组；而genfromtxt返回的是行数据的数组</li>
+</ul>
+<p>好像主要就是这样。另外，用mpl绘图时，数据可以是datetime.datetime类型，但不能使用datetime.datetime.time类型，因为前者提供了toordinal()函数。</p>
+<h2 id="订正"><a href="#订正" class="headerlink" title="订正"></a>订正</h2><p>当genfromtxt载入各列的数据类型不同时，返回的是一个1-d array，所以不能通过传入<code>unpack=True</code>取得列数据。另外，据说numpy的这些数据加载函数比起    <code>pandas</code>来说弱爆了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;两个函数做类似的事情，调用时的参数也基本一致，并且文档中也声称loadtxt是genfromtxt的简化版本，但实际测试发现两者还是有一些不一致，比较讨厌。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+      <category term="mpl" scheme="https://ogreup.github.io/tags/mpl/"/>
+    
+      <category term="python" scheme="https://ogreup.github.io/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Windows7配置Qt5.7.1开发环境</title>
+    <link href="https://ogreup.github.io/2017/05/02/Windows7%E9%85%8D%E7%BD%AEQt5-7-1%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/"/>
+    <id>https://ogreup.github.io/2017/05/02/Windows7配置Qt5-7-1开发环境/</id>
+    <published>2017-05-02T00:54:29.000Z</published>
+    <updated>2017-05-06T05:08:08.299Z</updated>
+    
+    <content type="html"><![CDATA[<p>我觉得Win7就已足够，不想升级到Win8或Win10，但这个操作系统毕竟还是有点老了。预编译的qt-opensource-windows-x86-msvc2013_64-5.7.1.exe并不是“即装即用”，还需要进行一些设置。<br><a id="more"></a></p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>Windows 7 SP1 旗舰版, 64bit</li>
+<li>Visual Studio Ultimate 2013</li>
+<li>Qt5（qt-opensource-windows-x86-msvc2013_64-5.7.1.exe）</li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>使用默认配置安装Qt5开发环境后，使用Qt Creator新建<code>Qt Console Application</code>，构建出现如下错误：<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LNK1104: cannot <span class="built_in">open</span> <span class="built_in">file</span> <span class="string">'kernel32.lib'</span></div></pre></td></tr></table></figure></p>
+<p>不知道是不是因为撰写本文时我的系统已不再“干净”，记得好像还出现过找不到windows.h之类的错误。总之，新建的Qt工程无法通过编译。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>显然，系统中是存在kernel32.lib这个文件的，在C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64目录下就有一份，于是在工程设置中修改<code>LIBS</code>变量定义：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LIBS += <span class="string">"-LC:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"</span></div></pre></td></tr></table></figure></p>
+<p>按照类似的思路，最终对工程设置的修改包括以下几项：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">DEFINES += _USING_V110_SDK71_</div><div class="line">INCLUDEPATH += <span class="string">"C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"</span></div><div class="line">LIBS += <span class="string">"-LC:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"</span></div><div class="line">RC_INCLUDEPATH += <span class="string">"C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"</span></div></pre></td></tr></table></figure></p>
+<p>添加<code>_USING_V110_SDK71_</code>宏定义是为了避免XXX重定义警告。这是我根据编译输出的提示，发现某个头文件对该宏进行了检测，在定义了该宏的情况下则不定义XXX而强行添加的。经过以上修改，工程终于可以编译通过了，运行也没有问题。</p>
+<p>为了避免对每个新建工程都重复以上同样的修改，可以把这些修改合并到系统级的配置文件。经过查找，修改D:\Qt\Qt5.7.1\5.7\msvc2013_64\mkspecs\win32-msvc2013\qmake.conf是有效的，修改后的文件如下：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># qmake configuration for win32-msvc2013</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Written for Microsoft Visual C++ 2013</span></div><div class="line"><span class="comment">#</span></div><div class="line"></div><div class="line">MSC_VER                 = 1800</div><div class="line">MSVC_VER                = 12.0</div><div class="line"><span class="keyword">include</span>(../common/msvc-desktop.conf)</div><div class="line">load(qt_config)</div><div class="line"></div><div class="line">DEFINES += _USING_V110_SDK71_</div><div class="line">INCLUDEPATH += <span class="string">"C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"</span></div><div class="line">LIBS += <span class="string">"-LC:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"</span></div><div class="line">RC_INCLUDEPATH += <span class="string">"C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Include"</span></div></pre></td></tr></table></figure></p>
+<h2 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h2><p>我知道这是一种非官方的修改方：这不应该是事情的正确运行方式。在stackoverflow网站上也只是找到一些类似的问题，心里总觉得不太踏实。尤其是对添加<code>_USING_V110_SDK71_</code>这个宏定义，不知有何副作用。</p>
+<p>发现如果不做任何更改，使用vs2013导入pro文件也无法编译，但是修改工程设置中的<code>Platform Toolset</code>后就可以：<br><img src="http://ophea8d0z.bkt.clouddn.com/images/win7-qt5-platform-toolset.png"></p>
+<p>应用该设置后展开C/C++选项卡下的Preprocessor页，发现也定义了<code>_USING_V110_SDK71_</code>，并且将windows库的路径设置为之前我向<code>LIBS</code>添加的路径：<br><img src="http://ophea8d0z.bkt.clouddn.com/images/win7-qt5-pdefs.png"></p>
+<p>似乎之前解决方案的效果，相当于在vs2013中指定使用<code>v120_xp</code>这个platform toolset。不算是完美的解释，至少也有了一个交代吧。</p>
+<h2 id="终极解决方案"><a href="#终极解决方案" class="headerlink" title="终极解决方案"></a>终极解决方案</h2><p>Visual Studio 2013在Windows7操作系统进行Windows C++开发需要安装Windows SDK 8.1！即使我的vs2013安装包是4.8GB的Ultimate with sp5版本，依然不是完整的。据说如果在联网的情况下安装vs2013，相关SDK的下载安装会自动进行。</p>
+<p>微软为这个sdk提供了在线安装程序，启动后可以选择在本机安装，或是下载后在其它计算机安装。下载后的文件约600多兆，目录结构如下：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">E</span>:\<span class="selector-tag">SETUP</span>\<span class="selector-tag">WINDOWS</span> <span class="selector-tag">SDK</span>\<span class="selector-tag">V8</span><span class="selector-class">.1</span> <span class="selector-tag">-</span> <span class="selector-tag">X64</span></div><div class="line">└─<span class="selector-tag">Windows</span> <span class="selector-tag">Kits</span></div><div class="line">    └─8<span class="selector-class">.1</span></div><div class="line">        └─<span class="selector-tag">StandaloneSDK</span></div><div class="line">            ├─<span class="selector-tag">Installers</span></div><div class="line">            ├─<span class="selector-tag">Patches</span></div><div class="line">            │  └─8<span class="selector-class">.100</span><span class="selector-class">.26936</span></div><div class="line">            └─<span class="selector-tag">Redistributable</span></div><div class="line">                ├─4<span class="selector-class">.5</span><span class="selector-class">.50930</span></div><div class="line">                └─4<span class="selector-class">.5</span><span class="selector-class">.51641</span></div></pre></td></tr></table></figure></p>
+<p>运行StandaloneSDK/sdksetup.exe进行离线安装，装好以后恢复Qt默认设置，尼玛，no problem。并且安装了这个把QtCreator不能调试的问题也解决了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;我觉得Win7就已足够，不想升级到Win8或Win10，但这个操作系统毕竟还是有点老了。预编译的qt-opensource-windows-x86-msvc2013_64-5.7.1.exe并不是“即装即用”，还需要进行一些设置。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="踩坑" scheme="https://ogreup.github.io/tags/%E8%B8%A9%E5%9D%91/"/>
+    
+      <category term="qt" scheme="https://ogreup.github.io/tags/qt/"/>
+    
+      <category term="programming" scheme="https://ogreup.github.io/tags/programming/"/>
+    
+      <category term="windows" scheme="https://ogreup.github.io/tags/windows/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Fedora25安装YouCompleteMe</title>
+    <link href="https://ogreup.github.io/2017/04/16/Fedora25%E5%AE%89%E8%A3%85YouCompleteMe/"/>
+    <id>https://ogreup.github.io/2017/04/16/Fedora25安装YouCompleteMe/</id>
+    <published>2017-04-16T08:12:09.000Z</published>
+    <updated>2017-05-06T05:06:37.266Z</updated>
+    
+    <content type="html"><![CDATA[<p>写这篇笔记的时候，我觉得自己像是职业的“产品评测人员“，在一段时间里孜孜不倦地摆弄某个东西，也许能够发现一些问题，但可能这些问题绝大多数人都不会遇到。我不知道这是否有意义。<br><a id="more"></a></p>
+<h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>前段时间买了个笔记本，人生中第一台自己的笔记本，型号是ThinkPad T460。什么都挺好（4g内存我都忍了），除了显示屏：分辨率是1366x768。是的，你没有看错，这是我在2017年买的全新笔记本所使用的分辨率，可能现在中低端手机上的屏幕分辨率都得比这个高。</p>
+<p>装了Android Studio，我只能说写代码的感觉相当憋把：一屏下来就显示不了多少代码，不论是长度还是宽度；界面编辑看着也相当难受。</p>
+<p>当然，一切在终端下看着还好。</p>
+<p>于是，把vim折腾成开发环境就有了很充足的理由。而且最近学习django，也确实在vim下写了一些python代码，时常YY如果vim能够自动补全django库得多爽。终端下的代码自动补全？必须上YouCompleteMe啊！</p>
+<p>我的操作系统是Fedora 25 64bit，内核版本4.10.6-200.fc25.x86_64。部分内容根据事后回忆整理，不一定准确，仅供参考。</p>
+<h2 id="下载YCM"><a href="#下载YCM" class="headerlink" title="下载YCM"></a>下载YCM</h2><p>我是通过Vundle这一插件管理工具下载YCM的，访问github可能需要使用代理。在我的情况下载速度相当慢，有好几次出现了异常中断的情况。不过这些与本文主题关系不大，略过不表。</p>
+<h2 id="简易模式安装"><a href="#简易模式安装" class="headerlink" title="简易模式安装"></a>简易模式安装</h2><p>YCM提供了安装脚本，这也是我首先选择的安装方式。不幸的是，脚本执行过程中需要下载<code>clang+llvm</code>的一个prebuilt包，在我的情况中是就是<a href="http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz" target="_blank" rel="external">Clang for x86_64 Ubuntu 14.04</a>。虽然通过传入<code>--system-libclang</code>参数使用系统自带clang库（Fedora 25已自带或可以通过dnf安装clang-libs，版本是3.9.1）而免去下载过程，但YCM强烈不建议这么做：</p>
+<blockquote>
+<p>NOTE: We STRONGLY recommend AGAINST use of the system libclang instead of the upstream compiled binaries. Random things may break. Save yourself the hassle and use the upstream pre-built libclang.</p>
+</blockquote>
+<p>似乎这个站点的下载速度更慢（四川电信169套餐，号称带宽100Mb），试过几次，看着下载进度以几分钟1%的速度更新，最后终于决定还是放弃了。</p>
+<p>没有其它办法，只能选择YCM官方文档中的<a href="https://github.com/Valloric/YouCompleteMe#full-installation-guide" target="_blank" rel="external">Full Installation Guide</a>模式，但这也需要前面提到的那个prebuilt包。于是在uget中新建了一个下载任务，电脑开着的时候就下载。</p>
+<h2 id="完全模式安装"><a href="#完全模式安装" class="headerlink" title="完全模式安装"></a>完全模式安装</h2><p>几天之后，Clang for x86_64 Ubuntu 14.04终于下载完毕。我把它解压到~/clang-latest目录下（包含bin, include, lib等子目录）。本以为剩下就configure &amp;&amp; make &amp;&amp; make install就没我啥事儿了，没想到按照YCM文档，在第一步生成makefile的时候就出错了。<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">paul at fed in ~/ycm_build</div><div class="line">$ cmake -G "Unix Makefiles" -DPATH_TO_LLVM_ROOT=~/clang-latest . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp</div><div class="line">-<span class="ruby">- The C compiler identification is GNU <span class="number">6.3</span>.<span class="number">1</span></span></div><div class="line"><span class="ruby">-- The CXX compiler identification is GNU <span class="number">6.3</span>.<span class="number">1</span></span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working C <span class="symbol">compiler:</span> /usr/bin/cc</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working C <span class="symbol">compiler:</span> /usr/bin/cc -- works</span></div><div class="line"><span class="ruby">-- Detecting C compiler ABI info</span></div><div class="line"><span class="ruby">-- Detecting C compiler ABI info - done</span></div><div class="line"><span class="ruby">-- Detecting C compile features</span></div><div class="line"><span class="ruby">-- Detecting C compile features - done</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working CXX <span class="symbol">compiler:</span> /usr/bin/c++</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working CXX <span class="symbol">compiler:</span> /usr/bin/c++ -- works</span></div><div class="line"><span class="ruby">-- Detecting CXX compiler ABI info</span></div><div class="line"><span class="ruby">-- Detecting CXX compiler ABI info - done</span></div><div class="line"><span class="ruby">-- Detecting CXX compile features</span></div><div class="line"><span class="ruby">-- Detecting CXX compile features - done</span></div><div class="line"><span class="ruby">-- Found <span class="symbol">PythonLibs:</span> /usr/lib64/libpython2.<span class="number">7</span>.so (found suitable version <span class="string">"2.7.13"</span>, minimum required is <span class="string">"2.6"</span>) </span></div><div class="line"><span class="ruby">Using libclang to provide semantic completion <span class="keyword">for</span> C/C++<span class="regexp">/ObjC</span></span></div><div class="line"><span class="ruby">CMake Error at ycm/CMakeLists.<span class="symbol">txt:</span><span class="number">315</span> (file)<span class="symbol">:</span></span></div><div class="line"><span class="ruby">  file RENAME failed to rename</span></div><div class="line"><span class="ruby"></span></div><div class="line"><span class="ruby">    /home/paul/clang-latest/lib/libclang.so..</span></div><div class="line"><span class="ruby"></span></div><div class="line"><span class="ruby">  to</span></div><div class="line"><span class="ruby"></span></div><div class="line"><span class="ruby">    /home/paul/clang-latest/lib/libclang.so.</span></div><div class="line"><span class="ruby"></span></div><div class="line"><span class="ruby">  <span class="symbol">because:</span> No such file <span class="keyword">or</span> directory </span></div><div class="line"><span class="ruby">  </span></div><div class="line"><span class="ruby">  Using external <span class="symbol">libclang:</span> /home/paul/clang-latest/lib/libclang.so.<span class="number">4.0</span></span></div><div class="line"><span class="ruby">-- Found <span class="symbol">PythonInterp:</span> /usr/bin/python2.<span class="number">7</span> (found version <span class="string">"2.7.13"</span>) </span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread.h</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread.h - found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create - <span class="keyword">not</span> found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthreads</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthreads - <span class="keyword">not</span> found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthread</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthread - found</span></div><div class="line"><span class="ruby">-- Found <span class="symbol">Threads:</span> TRUE</span></div><div class="line"><span class="ruby">-- Configuring incomplete, errors occurred!</span></div><div class="line"><span class="ruby">See also <span class="string">"/home/paul/ycm_build/CMakeFiles/CMakeOutput.log"</span>.</span></div><div class="line"><span class="ruby">See also <span class="string">"/home/paul/ycm_build/CMakeFiles/CMakeError.log"</span>.</span></div></pre></td></tr></table></figure></p>
+<p>上面cmake的输出中提示执行RENAME的时候出错了，但我感觉这应该不是一个关键错误（这一判断是整个过程中我所犯的关键错误。。。），于是从CMakeError.log中寻找线索：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">Determining <span class="keyword">if</span> the function pthread_create exists <span class="keyword">in</span> the pthreads failed with the following <span class="string">output:</span></div><div class="line">Change <span class="string">Dir:</span> <span class="regexp">/home/</span>paul<span class="regexp">/ycm_build/</span>CMakeFiles/CMakeTmp</div><div class="line"></div><div class="line">Run Build <span class="string">Command:</span><span class="string">"/usr/bin/gmake"</span> <span class="string">"cmTC_565cb/fast"</span></div><div class="line"><span class="regexp">/usr/</span>bin<span class="regexp">/gmake -f CMakeFiles/</span>cmTC_565cb.dir<span class="regexp">/build.make CMakeFiles/</span>cmTC_565cb.dir/build</div><div class="line">gmake[<span class="number">1</span>]: Entering directory <span class="string">'/home/paul/ycm_build/CMakeFiles/CMakeTmp'</span></div><div class="line">Building C object CMakeFiles<span class="regexp">/cmTC_565cb.dir/</span>CheckFunctionExists.c.o</div><div class="line"><span class="regexp">/usr/</span>bin<span class="regexp">/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/</span>cmTC_565cb.dir<span class="regexp">/CheckFunctionExists.c.o   -c /</span>usr<span class="regexp">/share/</span>cmake<span class="regexp">/Modules/</span>CheckFunctionExists.c</div><div class="line">Linking C executable cmTC_565cb</div><div class="line"><span class="regexp">/usr/</span>bin<span class="regexp">/cmake -E cmake_link_script CMakeFiles/</span>cmTC_565cb.dir/link.txt --verbose=<span class="number">1</span></div><div class="line"><span class="regexp">/usr/</span>bin<span class="regexp">/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/</span>cmTC_565cb.dir/CheckFunctionExists.c.o  -o cmTC_565cb -rdynamic -lpthreads </div><div class="line"><span class="regexp">/usr/</span>bin/<span class="string">ld:</span> cannot find -lpthreads</div><div class="line"><span class="string">collect2:</span> <span class="string">error:</span> ld returned <span class="number">1</span> exit status</div><div class="line">CMakeFiles<span class="regexp">/cmTC_565cb.dir/</span>build.<span class="string">make:</span><span class="number">97</span>: recipe <span class="keyword">for</span> target <span class="string">'cmTC_565cb'</span> failed</div><div class="line">gmake[<span class="number">1</span>]: *** [cmTC_565cb] Error <span class="number">1</span></div><div class="line">gmake[<span class="number">1</span>]: Leaving directory <span class="string">'/home/paul/ycm_build/CMakeFiles/CMakeTmp'</span></div><div class="line"><span class="string">Makefile:</span><span class="number">126</span>: recipe <span class="keyword">for</span> target <span class="string">'cmTC_565cb/fast'</span> failed</div><div class="line"><span class="string">gmake:</span> *** [cmTC_565cb/fast] Error <span class="number">2</span></div></pre></td></tr></table></figure></p>
+<p>原来是在检测pthread库的时候出错了。不过这个<code>/usr/bin/ld: cannot find -lpthreads</code>很奇怪，应该<code>-lpthread</code>才对啊，怎么多了一个s？于是在网上查找相关信息，居然没有遇到和我同样问题的。不过，通过查看相关帖子我发现cmake（我使用的版本是cmake 3.6.2，系统自带）在pthread库测试方面倒是有各种稀奇古怪的选项，比如说我可能需要这个<code>THREADS_PREFER_PTHREAD_FLAG</code>，启用该选项后指示gcc在使用pthread库时使用<code>-pthread</code>而不是<code>-lpthread</code>（居然还能这样写，我真是孤陋寡闻了）。是否需要启用该选项要看gcc的版本，似乎老一点的gcc就不支持<code>-pthread</code>（我的gcc版本是6.3.1，应该算是相当新了），于是，我在<code>~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/tests/gmock/gtest/cmake/internal_utils.cmake</code>文件中增加了一行：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set(<span class="name">THREADS_PREFER_PTHREAD_FLAG</span> <span class="number">1</span>) # new</div><div class="line">find_package(<span class="name">Threads</span>)</div></pre></td></tr></table></figure></p>
+<p>以为万事大吉，不过cmake还是出错了，但这一次CMakeError.log给出的信息不一样了：<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">Determining <span class="keyword">if</span> the pthread_create exist failed with the following output:</div><div class="line">Change <span class="keyword">Dir</span>: /home/paul/ycm_build/CMakeFiles/CMakeTmp</div><div class="line"></div><div class="line"><span class="keyword">Run</span> Build Command:<span class="string">"/usr/bin/gmake"</span> <span class="string">"cmTC_502dd/fast"</span></div><div class="line">/usr/bin/gmake -f CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/build.make CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/build</div><div class="line">gmake[1]: Entering directory '/home/paul/ycm_build/CMakeFiles/CMakeTmp'</div><div class="line">Building C object CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/CheckSymbolExists.c.o</div><div class="line">/usr/bin/<span class="keyword">cc</span>     -o CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/CheckSymbolExists.c.o   -c /home/paul/ycm_build/CMakeFiles/CMakeTmp/CheckSymbolExists.c</div><div class="line">Linking C executable cmTC_502dd</div><div class="line">/usr/bin/cmake -<span class="keyword">E</span> cmake_link_script CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/link.txt --verbose=1</div><div class="line">/usr/bin/<span class="keyword">cc</span>       CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/CheckSymbolExists.c.o  -o cmTC_502dd -rdynamic </div><div class="line">CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/CheckSymbolExists.c.o: <span class="keyword">In</span> function <span class="symbol">`main'</span>:</div><div class="line">CheckSymbolExists.c:(.text+0x16): undefined reference to <span class="symbol">`pthread_create'</span></div><div class="line">collect2: <span class="keyword">error</span>: ld returned 1 <span class="keyword">exit</span> status</div><div class="line">CMakeFiles/cmTC_502dd.<span class="keyword">dir</span>/build.make:97: recipe <span class="keyword">for</span> target 'cmTC_502dd' failed</div><div class="line">gmake[1]: *** [cmTC_502dd] <span class="keyword">Error</span> 1</div><div class="line">gmake[1]: Leaving directory '/home/paul/ycm_build/CMakeFiles/CMakeTmp'</div><div class="line">Makefile:126: recipe <span class="keyword">for</span> target 'cmTC_502dd/fast' failed</div><div class="line">gmake: *** [cmTC_502dd/fast] <span class="keyword">Error</span> 2</div></pre></td></tr></table></figure></p>
+<p>我心说这特么都啥**玩意儿啊？装个软件还这么费尽？人生到底图个啥？</p>
+<h2 id="解决第一个编译错误"><a href="#解决第一个编译错误" class="headerlink" title="解决第一个编译错误"></a>解决第一个编译错误</h2><p>第一次尝试修改失败，只得认真看看cmake输出的关于RENAME的错误提示到底怎么来的。打开 ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/CMakeList.txt，定位到315行附近：<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># One can use the system libclang.[so|dylib] like so:</span></div><div class="line"><span class="comment">#   cmake -DUSE_SYSTEM_LIBCLANG=1 [...]</span></div><div class="line"><span class="comment"># One can also explicitely pick the external libclang.[so|dylib] for use like so:</span></div><div class="line"><span class="comment">#   cmake -DEXTERNAL_LIBCLANG_PATH=/path/to/libclang.so [...]</span></div><div class="line"><span class="comment"># The final .so we build will then first look in the same dir in which it is</span></div><div class="line"><span class="comment"># located for libclang.so. This is provided by the rpath = $ORIGIN feature.</span></div><div class="line">message(<span class="string">"EXTERNAL_LIBCLANG_PATH=<span class="variable">$&#123;EXTERNAL_LIBCLANG_PATH&#125;</span>"</span>)</div><div class="line">message(<span class="string">"USE_SYSTEM_LIBCLANG=<span class="variable">$&#123;USE_SYSTEM_LIBCLANG&#125;</span>"</span>)</div><div class="line"><span class="keyword">if</span> ( EXTERNAL_LIBCLANG_PATH <span class="keyword">OR</span> USE_SYSTEM_LIBCLANG )</div><div class="line">  <span class="keyword">if</span> ( USE_SYSTEM_LIBCLANG )</div><div class="line">    <span class="keyword">if</span> ( APPLE )</div><div class="line">      <span class="builtin-name">set</span>( ENV_LIB_PATHS ENV DYLD_LIBRARY_PATH )</div><div class="line">    elseif ( UNIX )</div><div class="line">      <span class="builtin-name">set</span>( ENV_LIB_PATHS ENV LD_LIBRARY_PATH )</div><div class="line">    elseif ( WIN32 )</div><div class="line">      <span class="builtin-name">set</span>( ENV_LIB_PATHS ENV PATH )</div><div class="line">    <span class="keyword">else</span> ()</div><div class="line">      <span class="builtin-name">set</span>( ENV_LIB_PATHS <span class="string">""</span> )</div><div class="line">    endif()</div><div class="line">    # On Debian-based systems, llvm installs into /usr/lib/llvm-x.y.</div><div class="line">    file( GLOB SYS_LLVM_PATHS <span class="string">"/usr/lib/llvm*/lib"</span> )</div><div class="line">    # Need TEMP because find_library does <span class="keyword">not</span> work with an option variable</div><div class="line">    # On Debian-based systems only a symlink <span class="keyword">to</span> libclang.so.1 is created</div><div class="line">    find_library( TEMP</div><div class="line">                  NAMES</div><div class="line">                  clang</div><div class="line">                  libclang.so.1</div><div class="line">                  PATHS</div><div class="line">                  <span class="variable">$&#123;ENV_LIB_PATHS&#125;</span></div><div class="line">                  /usr/lib</div><div class="line">                  /usr/lib/llvm</div><div class="line">                  <span class="variable">$&#123;SYS_LLVM_PATHS&#125;</span></div><div class="line">                  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib</div><div class="line">                  /Library/Developer/CommandLineTools/usr/lib )</div><div class="line">    <span class="builtin-name">set</span>( EXTERNAL_LIBCLANG_PATH <span class="variable">$&#123;TEMP&#125;</span> )</div><div class="line">	<span class="keyword">else</span>() # EXTERNAL_LIBCLANG_PATH is set</div><div class="line">    # <span class="keyword">For</span> Macs, we <span class="keyword">do</span> things differently; look further <span class="keyword">in</span> this file.</div><div class="line">	<span class="keyword">if</span> ( <span class="keyword">NOT</span> APPLE <span class="keyword">AND</span> <span class="keyword">NOT</span> MSVC )</div><div class="line">      # Setting this <span class="keyword">to</span> <span class="literal">true</span> makes sure that libraries we build will have our</div><div class="line">      # rpath <span class="builtin-name">set</span> even without having <span class="keyword">to</span> <span class="keyword">do</span> <span class="string">"make install"</span></div><div class="line">      <span class="builtin-name">set</span>( CMAKE_BUILD_WITH_INSTALL_RPATH <span class="literal">TRUE</span> )</div><div class="line">      <span class="builtin-name">set</span>( CMAKE_INSTALL_RPATH <span class="string">"\$ORIGIN"</span> )</div><div class="line">      # <span class="builtin-name">Add</span> directories <span class="keyword">from</span> all libraries outside the build tree <span class="keyword">to</span> the rpath.</div><div class="line">      # This makes the dynamic linker able <span class="keyword">to</span> <span class="builtin-name">find</span> non<span class="built_in"> system </span>libraries that</div><div class="line">      # our libraries require, <span class="keyword">in</span> particular the Python one (<span class="keyword">from</span> pyenv <span class="keyword">for</span></div><div class="line">      # instance).</div><div class="line">      <span class="builtin-name">set</span>( CMAKE_INSTALL_RPATH_USE_LINK_PATH <span class="literal">TRUE</span> )</div><div class="line">      # When loading our library, the dynamic linker will look <span class="keyword">for</span></div><div class="line">      # libclang.so.4, <span class="keyword">not</span> libclang.so.4.x.</div><div class="line">	file( RENAME</div><div class="line">		<span class="variable">$&#123;EXTERNAL_LIBCLANG_PATH&#125;</span>.<span class="variable">$&#123;CLANG_MAJOR_VERSION&#125;</span>.<span class="variable">$&#123;CLANG_MINOR_VERSION&#125;</span></div><div class="line">		<span class="variable">$&#123;EXTERNAL_LIBCLANG_PATH&#125;</span>.<span class="variable">$&#123;CLANG_MAJOR_VERSION&#125;</span> )</div><div class="line">    endif()</div><div class="line">  endif()</div><div class="line"></div><div class="line">  # On Linux, the library target is a symlink of the soversion one.  Since it</div><div class="line">  # will be copied <span class="keyword">in</span> the project folder, we need the symlinked library.</div><div class="line">  get_filename_component( LIBCLANG_TARGET <span class="string">"<span class="variable">$&#123;EXTERNAL_LIBCLANG_PATH&#125;</span>"</span> REALPATH )</div><div class="line">  message( <span class="string">"Using external libclang: <span class="variable">$&#123;LIBCLANG_TARGET&#125;</span>"</span> )</div><div class="line"><span class="keyword">else</span>()</div><div class="line">  <span class="builtin-name">set</span>( LIBCLANG_TARGET )</div><div class="line">endif()</div></pre></td></tr></table></figure></p>
+<p>看起来<code>CLANG_MAJOR_VERSION</code>和<code>CLANG_MINOR_VERSION</code>都没有被正确定义，导致使用其值拼接文件名时出现了问题。不过，即使这些变量被定义了，这样的RENAME好像也没什道理，因为在~/clang-latest/lib目录下目标文件本来就存在了：<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">paul at fed in ~<span class="regexp">/clang-latest</span></div><div class="line"><span class="regexp">$ ls -l lib/libclang</span>.so*</div><div class="line">lrwxrwxrwx. <span class="number">1</span> paul paul       <span class="number">13</span> Apr  <span class="number">9</span> <span class="number">21</span>:<span class="number">17</span> <span class="class"><span class="keyword">lib</span>/<span class="title">libclang</span>.<span class="title">so</span> -&gt; <span class="title">libclang</span>.<span class="title">so</span>.4</span></div><div class="line">lrwxrwxrwx. <span class="number">1</span> paul paul       <span class="number">15</span> Apr  <span class="number">9</span> <span class="number">21</span>:<span class="number">17</span> <span class="class"><span class="keyword">lib</span>/<span class="title">libclang</span>.<span class="title">so</span>.4 -&gt; <span class="title">libclang</span>.<span class="title">so</span>.4.0</span></div><div class="line">-rw-r--r--. <span class="number">1</span> paul paul <span class="number">59595439</span> Mar <span class="number">11</span> <span class="number">03</span>:<span class="number">01</span> <span class="class"><span class="keyword">lib</span>/<span class="title">libclang</span>.<span class="title">so</span>.4.0</span></div></pre></td></tr></table></figure></p>
+<p>最让我觉得别扭的地方在这里：<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">   # <span class="keyword">For</span> Macs, we <span class="keyword">do</span> things differently; look further <span class="keyword">in</span> this <span class="keyword">file</span>.</div><div class="line"><span class="keyword">if</span> ( <span class="keyword">NOT</span> APPLE <span class="keyword">AND</span> <span class="keyword">NOT</span> MSVC )</div></pre></td></tr></table></figure></p>
+<p>这注释和紧随其后的代码怎么觉得有点对不上呢？<code>NOT APPLE AND NOT MSVC</code>怎么就成了<code>For Macs</code>了呢？难道是写代码时出现的笔误？抱着试试看的心态，我把<code>if (NOT APPLE AND NOT MSVC)</code>改成了<code>if (NOT UNIX AND NOT MSVC)</code>（修改的实际效果是：if条件块中的语句在我所在平台中不会被执行），我擦，cmake居然顺利通过了！<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">paul at fed in ~/ycm_build</div><div class="line">$ cmake -G "Unix Makefiles" -DPATH_TO_LLVM_ROOT=~/clang-latest . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp</div><div class="line">-<span class="ruby">- The C compiler identification is GNU <span class="number">6.3</span>.<span class="number">1</span></span></div><div class="line"><span class="ruby">-- The CXX compiler identification is GNU <span class="number">6.3</span>.<span class="number">1</span></span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working C <span class="symbol">compiler:</span> /usr/bin/cc</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working C <span class="symbol">compiler:</span> /usr/bin/cc -- works</span></div><div class="line"><span class="ruby">-- Detecting C compiler ABI info</span></div><div class="line"><span class="ruby">-- Detecting C compiler ABI info - done</span></div><div class="line"><span class="ruby">-- Detecting C compile features</span></div><div class="line"><span class="ruby">-- Detecting C compile features - done</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working CXX <span class="symbol">compiler:</span> /usr/bin/c++</span></div><div class="line"><span class="ruby">-- Check <span class="keyword">for</span> working CXX <span class="symbol">compiler:</span> /usr/bin/c++ -- works</span></div><div class="line"><span class="ruby">-- Detecting CXX compiler ABI info</span></div><div class="line"><span class="ruby">-- Detecting CXX compiler ABI info - done</span></div><div class="line"><span class="ruby">-- Detecting CXX compile features</span></div><div class="line"><span class="ruby">-- Detecting CXX compile features - done</span></div><div class="line"><span class="ruby">-- Found <span class="symbol">PythonLibs:</span> /usr/lib64/libpython2.<span class="number">7</span>.so (found suitable version <span class="string">"2.7.13"</span>, minimum required is <span class="string">"2.6"</span>) </span></div><div class="line"><span class="ruby">Using libclang to provide semantic completion <span class="keyword">for</span> C/C++<span class="regexp">/ObjC</span></span></div><div class="line"><span class="ruby">Using external <span class="symbol">libclang:</span> /home/paul/clang-latest/lib/libclang.so.<span class="number">4.0</span></span></div><div class="line"><span class="ruby">-- Found <span class="symbol">PythonInterp:</span> /usr/bin/python2.<span class="number">7</span> (found version <span class="string">"2.7.13"</span>) </span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread.h</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread.h - found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create - <span class="keyword">not</span> found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthreads</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthreads - <span class="keyword">not</span> found</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthread</span></div><div class="line"><span class="ruby">-- Looking <span class="keyword">for</span> pthread_create <span class="keyword">in</span> pthread - found</span></div><div class="line"><span class="ruby">-- Found <span class="symbol">Threads:</span> TRUE</span></div><div class="line"><span class="ruby">-- Configuring done</span></div><div class="line"><span class="ruby">-- Generating done</span></div><div class="line"><span class="ruby">-- Build files have been written <span class="symbol">to:</span> /home/paul/ycm_build</span></div></pre></td></tr></table></figure></p>
+<p>之后的build也顺利通过。什么叫“踏破铁鞋无觅处，得来全不费功夫”，劳资简直有点怀疑人生了。。。想来也许是cmake在一个不应该出错的地方卡了壳，导致后面有些编译选项没有被正确设置，成功地误导我去解决pthread库检测问题。</p>
+<p>其实这和编译C++工程时遇到的情况也有些类似，编译器可能给出一大堆抱怨，正确和高效的解决方式是：<strong> 总是应该解决你发现的第一个错误，然后立刻编译一次 </strong>。很多时候，后面出现的错误都是由于第一个错误引起的。</p>
+<h2 id="YCM测试运行"><a href="#YCM测试运行" class="headerlink" title="YCM测试运行"></a>YCM测试运行</h2><p>最终的结果，似乎不过是~/.vim/bundle/YouCompleteMe/third_party/ycmd目录下多出来两个文件：libclang.so.4.0和ycm_core.so。这里倒是需要把libclang.so.4.0重命名为libclang.so.4，否则YCM无法正常工作:<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">2017-04-16 00:26:33,712 - <span class="keyword">ERROR</span> - libclang.<span class="keyword">so</span>.4: cannot <span class="keyword">open</span> shared object <span class="keyword">file</span>: <span class="keyword">No</span> such <span class="keyword">file</span> or directory</div><div class="line">Traceback (most recent call last):</div><div class="line">  <span class="keyword">File</span> <span class="string">"/home/paul/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd/server_utils.py"</span>, <span class="keyword">line</span> 95, <span class="keyword">in</span> CompatibleWithCurrentCore</div><div class="line">    ycm_core = ImportCore()</div><div class="line">  <span class="keyword">File</span> <span class="string">"/home/paul/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd/server_utils.py"</span>, <span class="keyword">line</span> 87, <span class="keyword">in</span> ImportCore</div><div class="line">    import ycm_core <span class="keyword">as</span> ycm_core</div><div class="line">ImportError: libclang.<span class="keyword">so</span>.4: cannot <span class="keyword">open</span> shared object <span class="keyword">file</span>: <span class="keyword">No</span> such <span class="keyword">file</span> or directory</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;写这篇笔记的时候，我觉得自己像是职业的“产品评测人员“，在一段时间里孜孜不倦地摆弄某个东西，也许能够发现一些问题，但可能这些问题绝大多数人都不会遇到。我不知道这是否有意义。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+      <category term="linux" scheme="https://ogreup.github.io/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>第一个Android应用</title>
+    <link href="https://ogreup.github.io/2017/04/04/%E7%AC%AC%E4%B8%80%E4%B8%AAAndroid%E5%BA%94%E7%94%A8/"/>
+    <id>https://ogreup.github.io/2017/04/04/第一个Android应用/</id>
+    <published>2017-04-04T05:18:45.000Z</published>
+    <updated>2017-05-06T05:31:48.592Z</updated>
+    
+    <content type="html"><![CDATA[<p>工欲善其事，必先利其器。<br>磨刀不误砍柴工。<br><a id="more"></a></p>
+<h2 id="Andriod-Studio-SDK下载与配置"><a href="#Andriod-Studio-SDK下载与配置" class="headerlink" title="Andriod Studio / SDK下载与配置"></a>Andriod Studio / SDK下载与配置</h2><p>不管进行什么开发，至少需要SDK，IDE是可选的，这个道理我懂。但是Android<a href="https://developer.android.com/studio/index.html#linux-bundle" target="_blank" rel="external">官方主页的说明</a>有点误人子弟：Android Studio for 32bit Windows的版本明确写了”No Android SDK”，而for linux 的版本则没有这样的说明，但其实应该也是不包含SDK的（至少我感觉我有点被坑了）。<br><img src="http://ophea8d0z.bkt.clouddn.com/images/android-download.png"></p>
+<p>的确，只下载SDK也是可以的：</p>
+<blockquote>
+<p>Get just the command line tools<br>If you do not need Android Studio, you can download the basic Android command line tools below. You can use the included sdkmanager to download other SDK packages.</p>
+</blockquote>
+<p>尝试在AS中下载SDK，事实证明这是一个悲剧。先是出现sdk update sites（那些站点正常情况下铁定连不上） 不能uncheck的情况，也许是由于我过于自信地启用了仅限于可连接但速度奇慢的proxy、下载并配置了官方repo引起的。stackoverflow里有人问到了相同的问题，但没有回答。总之，我把主目录下dot打头的android目录都删掉，执行了一次dnf update（升级了100多个包，kernel版本从4.9.13升级到4.10.5），并且不启用proxy，sdk update sites里那些不太可能连上的条目终于没有了（只剩下一个dl.google.com/android/repository2-1.xml依然顽强地存在，导致AS每次启动都会尝试连接这个url，相当费时）。但这并未解决SDK的下载问题，网上搜到的使用国内镜像的参考说明也和我在AS中看到的界面不一样。难道是因为我使用的AS版本比较新，参考说明都过时了？</p>
+<p>简书上的一篇文章（见文末参考链接）给出的信息终于让在黑暗中摸索的我看到了一丝光亮。Android SDK通过<a href="https://dl.google.com/android/repository/tools_r25.2.3-linux.zip" target="_blank" rel="external">tools</a>（Update：确切的说，是通过其中”included sdkmanager”）下载（如果我没理解错的话）。neusoft提供了这个包的镜像，链接在<a href="http://mirrors.neusoft.edu.cn/android/repository/tools_r25.2.5-linux.zip" target="_blank" rel="external">这里</a>（版本不完全一样），下载后运行tools/andriod，按照<a href="http://mirrors.neusoft.edu.cn/more.we#android" target="_blank" rel="external">配置说明</a>从neusoft下载SDK、Build Tools、Api等等。（具体需要哪些我也不清楚，都是在建了一个helloworld工程后，提示我缺什么再回头下载的，那叫一个费劲。）</p>
+<p>好吧，关于SDK的下载安装，我再捋一捋。</p>
+<ul>
+<li><p><strong>应该可以</strong>在AS中可以对SDK进行下载和管理，点击<code>Tool-&gt;Android-&gt;SDK Manager</code>，配置好<strong>合适</strong>的<code>SDK Update Sites</code>，下载安装也是ok的。估计墙外普通青年一般都这么干，没毛病（但是我没有成功过）。</p>
+<img src="http://ophea8d0z.bkt.clouddn.com/images/as-sdk-manager.png">
+</li>
+<li><p>Andoid也提供了<strong>独立的工具</strong>进行SDK的下载和管理，这就是前面提到的tools，运行后的界面是下面这样。关于如何在国内下载和配置Android SDK，能够找到的大部分参考都是使用tools的（当然都是中文的），比如neusoft的配置说明。我一开始是在AS中尝试这些方法，发现界面总是和别人描述的不一样，问题就出在这。</p>
+<img src="http://ophea8d0z.bkt.clouddn.com/images/standalone-sdk-manager.png">
+</li>
+</ul>
+<img src="http://ophea8d0z.bkt.clouddn.com/images/standalone-sdk-manager-sites.png">
+<h2 id="Step1-Hello-world-running-on-AVD-Emulator"><a href="#Step1-Hello-world-running-on-AVD-Emulator" class="headerlink" title="Step1: Hello world running on AVD Emulator"></a>Step1: Hello world running on AVD Emulator</h2><p>首次构建的时候需要下载gradle，不知道这是什么鬼（Update：类似cmake的自动构建工具？），总之它就开始自顾自地从官方主页下载，我耐着性子试过几次，从来没有成功/完成过。可以修改MyApplication/gradle/wrapper/gradle-wrapper.properties这个文件里的distributionUrl，FOR God’s Sake，改成你知道的比较快的镜像地址。或者提前把多个版本的gradle准备好（Update: 似乎比较困难，因为~/.gradle下的目录结构比较奇怪，比如3.3版本的目录是~/.gradle/wrapper/dists/gradle-3.3-all/55gk2rcmfc6p2dg9u9ohc3hw9/gradle-3.3/，不知道这个55gk*是啥玩意儿）。</p>
+<p>另外，模拟器硬件选x86架构（或者应该说选用和开发机相同的处理器架构？），运行起来”is 10x times faster…”，这也是在首次构建完成、运行的时候AS给出的提示。</p>
+<p>第一个android app终于在模拟器上跑起来了。这有可能是多年来我完成的最为费劲的一个helloworld。如果很多人也像我一样求速成，可能还没到这一步就放弃了，是不是也是android开发的一种门槛？不过话又说回来，如果是在Windows系统，并且一上来就从国内镜像站点下载已集成SDK的AS bundle版本，我遇到的这些问题压根儿不会发生。</p>
+<p>helloworld的截图，留作纪念：-)<br><img src="http://ophea8d0z.bkt.clouddn.com/images/android-helloworld.png"></p>
+<h2 id="What-is-Gradle-…"><a href="#What-is-Gradle-…" class="headerlink" title="What is Gradle, …"></a>What is Gradle, …</h2><p>对于新手来说，希望弄清楚开发环境包含了那些东西，分别是干什么用的。现在试着回答这些问题。</p>
+<ul>
+<li>Android Studio<br>IDE，集成开发环境，比如QtCreator，VisualStudio。</li>
+<li>Android SDK<br>真正干活的、性格古怪的家伙，当然AS把它该做的事情也完成的很好;-)<ul>
+<li>Tools<br>包括各种平台下的emulator，估计用于运行虚拟设备；另外还有一个名为android的脚本，用来启动<code>Android SDK Manager</code>，下载和管理SDK。</li>
+<li>Platform-tools<br>包括adb、fastboot等工具，估计用于向虚拟设备装载sys-img，以及实现虚拟设备与调试器之间的数据通信。</li>
+<li>Build-tools<br>实际的构建工具，包括各种<em>cc、</em>ld等，从源代码生成目标平台的二进制码。使用最新版本就好。</li>
+<li>Andoid 7.1.1 (API 25)<br>构建具体版本Android应用需要的API，我目前手机(Honor 4x)运行的版本是4.4.4。各个版本对应SDK目录下的platforms和sources目录。</li>
+<li>Extra<br>核心应用API之外的服务，例如USB调试、Web、Google地图等。</li>
+</ul>
+</li>
+<li>Gradle<br>Android的自动构建系统，比如cmake。</li>
+<li>addon.xml / sys-img.xml / …<br>sys-img是用于不同系统版本（15/16/25）、不同架构（arm/mips/x86）、不同类型（phone/tv/pad）虚拟设备的二进制码。system.img和userdata.img都比较大（一般上G或数百M），根据需要选择。</li>
+</ul>
+<p>下面是手绘的草图，用来说明以上这些东西在开发调试过程中所处的位置、相互关系，代表了我目前的理解。<br><img src="http://ophea8d0z.bkt.clouddn.com/images/android-env.jpg"></p>
+<h2 id="Step2-Hello-world-running-on-real-hardware"><a href="#Step2-Hello-world-running-on-real-hardware" class="headerlink" title="Step2: Hello world running on real hardware"></a>Step2: Hello world running on real hardware</h2><p>把手机通过USB连接到开发电脑上，并且在开发人员选项中启用调试功能，AVD自动发现了手机设备，调试运行的时候直接把这个Helloworld app安装在我的手机上了（首页出现一个看着很糙的绿色Android小人儿图标）。运行正常。</p>
+<p>但是通过文件的方式把生成的ipk传到手机上安装没有成功。</p>
+<p>Update: 新建工程，全部使用默认设置，Min Sdk Verison选择 API 15，未对manifests进行修改，生成的app-debug.ipk在手机安装成功，运行正常。</p>
+<p><hr></p>
+<h2 id="可能比较有用的链接"><a href="#可能比较有用的链接" class="headerlink" title="可能比较有用的链接"></a>可能比较有用的链接</h2><p><a href="http://www.flysnow.org/2017/03/05/tools_mirrors_update.html" target="_blank" rel="external">http://www.flysnow.org/2017/03/05/tools_mirrors_update.html</a><br><a href="http://www.jianshu.com/p/36cfa1614d23" target="_blank" rel="external">http://www.jianshu.com/p/36cfa1614d23</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;工欲善其事，必先利其器。&lt;br&gt;磨刀不误砍柴工。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="programming" scheme="https://ogreup.github.io/tags/programming/"/>
+    
+      <category term="android" scheme="https://ogreup.github.io/tags/android/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于API命名</title>
+    <link href="https://ogreup.github.io/2017/01/20/%E5%85%B3%E4%BA%8EAPI%E5%91%BD%E5%90%8D/"/>
+    <id>https://ogreup.github.io/2017/01/20/关于API命名/</id>
+    <published>2017-01-20T02:20:00.000Z</published>
+    <updated>2017-09-06T07:35:58.872Z</updated>
+    
+    <content type="html"><![CDATA[<p>好的API命名是可以根据完成的功能猜出来的。<br><a id="more"></a></p>
+<p>写完这个题目，想起大学里刚开始学习编程时，同宿舍一哥们儿已经编程小牛一枚了。我问他，你怎么知道实现某个操作（比如获得CString对象的长度，获取系统时间，等等）需要调用哪个函数？答曰：靠猜啊，还有MSDN。于是我也学会了这种方法：需要实现什么功能，先猜一猜可能的名称会是什么，然后在MSDN的索引里边去找，屡试不爽。后来随着接触的东西慢慢增多，也会发现不同的系统/库在命名方面会有不同的习惯（convention)或者风格（flavor），但猜出来的东西基本八九不离十，就算没有直接命中也能发现非常相关的信息。</p>
+<p>好的API命名应该是告诉用户这个函数要干什么，不多不少。命名反映了设计者的基本素养，就算从命名大致推断设计者的水平可能也不为过。花了好一段时间解决了OSG中世界坐标向屏幕坐标的转换问题，我感觉有点被（可能不好）的API命名给坑了。</p>
+<p>项目指定使用OSG进行仿真场景开发，并且需要得到目标（OSG场景中的某个Node）的屏幕坐标位置，作为其他一些操作的输入条件。刚开始时倒是在网上找到了一些代码片段，但是算出来的结果都明显不对。由于时间比较紧张、对OSG也不熟悉，于是采取了其它方法实现了这个功能，不足之处是计算结果有些偏差；好在进行固定值修正后也能满足使用要求。</p>
+<p>这两天有些空闲时间，于是又开始捣鼓这一问题的精确解析方法。其实过程说起来也简单，就是根据节点的世界坐标，进行视图（View）、投影（Projection）和窗口（Window）矩阵的转换，然后就完事儿了；这些转换矩阵OSG中都提供了明确的函数调用，于是重要的问题便是得到节点的世界坐标。OSG中场景采用树型结构进行组织，节点可能存在父节点、祖父节点。。。，节点的坐标又有局部和世界之分。根据我的理解，局部坐标就是节点相对其父节点的坐标，世界坐标就是节点在场景中的绝对坐标，也就是相当于场景根节点的坐标。为了计算世界坐标，OSG好心地提供了osg::computeLocalToWorld这样一个全局函数，网上找到的用法类似这样：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">worldPos = localPos * osg::computeLocalToWorld(<span class="keyword">node</span><span class="title">-&gt;getParentalNodePaths</span>()[<span class="number">0</span>]);</div></pre></td></tr></table></figure>
+<p>从字面上看，getParentalNodePaths得到一系列的路径，每条路径由父节点至场景根的多个节点组成；于是computeLocalToWorld得到局部坐标到世界坐标的转换矩阵；再去乘localPos，得到worldPos。看起来合情合理。但实际执行结果却是另一回事，总是得到显然不合理的结果。</p>
+<p>为了搞清楚是怎么回事，我写了一个简单的测试程序，搭建了一个简单的场景，试图一步一步验证计算结果是否与预想的情况一致。结果发现世界坐标的计算就出错了：node直接插入场景根并设置其坐标为(10, 0, 0)，这样对node来说局部坐标和世界坐标都应保持(10, 0, 0)不变，而通过计算却得到(20, 0, 0)。再检查getParentalNodePath()[0]，发现返回的结果是这样:Camera&lt;-SceneRoot&lt;-node：不仅包括一个摄像机节点，而且node自身也包括在内。这些都与预想的情况不一样。会不会由于getParentalNodePaths的结果包括了调用者本身，使得计算时出现了重复呢？修改并验证了一下，果然（居然就）得到了正确的结果。进一步查看了OSG3.4源码，也发现了类似的计算过程（搜索prunedNodePath)。最终经过多次验证，世界坐标的计算方法是这样：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// osg::PositionAttitudeTransform *<span class="keyword">node</span> <span class="title">= ...</span></div><div class="line"><span class="title">osg</span>::NodePath nodePath = <span class="keyword">node</span><span class="title">-&gt;getParentalNodePaths</span>()[<span class="number">0</span>];</div><div class="line">osg::NodePath prunedNodePath(nodePath.begin(), nodePath.end() - <span class="number">1</span>);</div><div class="line">osg::Vec3d worldPos = <span class="keyword">node</span><span class="title">-&gt;getPosition</span>() * osg::computeLocalToWorld(prunedNodePath)</div><div class="line">或者：</div><div class="line">osg::NodePath nodePath = <span class="keyword">node</span><span class="title">-&gt;getParentalNodePaths</span>()[<span class="number">0</span>];</div><div class="line">osg::Vec3d worldPos = osg::Vec3d(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) * osg::computeLocalToWorld(nodePath)</div></pre></td></tr></table></figure>
+<p>以上两种方式，不管是哪一种，在我看来都比较别扭，不像是可以正确工作的代码，因为computeLocalToWorld和getParentalNodePaths其字面上带给人的信息和在代码中的实际作用不太吻合。有点被“不好的API命名”给坑了。（不知我的理解是否正确）</p>
+<p>通过这次解决问题得到的一些经验：</p>
+<ol>
+<li>对于不知道的东西，如果通过搜索的方式获得结果，最好能够理解别人提供的解决方案。官方的源代码是第一手资料，看源码中那些你不熟悉的API是怎么用的，作者的用法是API设计意图最好的体现；</li>
+<li>出现问题，首先在尽可能简化的情况下进行逐步检验，看看每一步的结果是否符合预期；这可能比在网上盲目搜索并寄希望得到专家解答更高效；</li>
+<li>需要对代码进行说明时，可以采用assert的方式表述你认为的结论。</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;好的API命名是可以根据完成的功能猜出来的。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+      <category term="osg" scheme="https://ogreup.github.io/tags/osg/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于tinyxml的“奇怪”问题</title>
+    <link href="https://ogreup.github.io/2016/05/20/%E5%85%B3%E4%BA%8Etinyxml%E7%9A%84%E2%80%9C%E5%A5%87%E6%80%AA%E2%80%9D%E9%97%AE%E9%A2%98/"/>
+    <id>https://ogreup.github.io/2016/05/20/关于tinyxml的“奇怪”问题/</id>
+    <published>2016-05-20T02:20:00.000Z</published>
+    <updated>2017-09-06T07:37:12.467Z</updated>
+    
+    <content type="html"><![CDATA[<p>tinyxml一直很好用，一直以源码方式添加到工程中使用。但如果在工程中使用了一个动态链接库（比如osgEarth）看，并且这个动态链接库也以源码方式使用了tinyxml，可能就不好玩了：编译或者运行时的错误莫名奇妙，让人抓瞎。<br><a id="more"></a></p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>osgEarth 2.7 / Qt 4.8.1/ 中标麒麟Linux</p>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>做了一个基于osgEarth / OpenSceneGraph的场景演示程序， 基本功能已经完成差不多了，然后开始增加程序的xml配置功能。从一个之前的项目中拷贝了tinyxml源文件、以及AppConfig类（单体类，集合了所有程序配置参数，提供loadConfigFromFile、loadDefaults等接口，调用tinyxml相关函数实现xml解析），修改相关实现……做完之后编译、运行，程序居然直接崩溃了。然后排查了很久，发现竟然是因为osgDB::readNodeFile失败了。</p>
+<p>这让我觉得有点莫名奇妙：这和tinyxml有啥关系？？？</p>
+<p>既然问题是在工程中添加了tinyxml后出现的，直接的解决办法是使用除tinyxml的其它方式来实现xml解析功能。在OSG、osgEarth的源码里找了找，发现了osgEarth/XmlUtil，看名字估计是用来处理xml的。程序已经链接了libosgEarth，那么XmlUtil的相关函数应该也是可用的。于是修改工程，移除tinyxml，并使用XmlUtil提供接口实现AppConfig::loadConfigFromFile函数的功能。编译ok，但是运行发现配置文件没有被成功读取。尝试在osgEarth的源码中寻找XmlUtil使用的例子，居然一无所获！这也奇怪，一个没有被任何地方引用的类，要它干嘛？</p>
+<p>然后又仔细看了看XmlUtil的实现函数，发现这货底层也是基于tinyxml的，原来osgEarth也是以源码方式使用了tinyxml。这让本文开头的错误看起来不是那么匪夷所思了：虽然不清楚确切原因，至少还是有些关联的。任何问题总有原因，没有“奇怪”的。</p>
+<p>那么使用osgEarth源码中的tinyxml是否可行呢？测试了一下还是不行：仅包含tinyxml.h时，编译报错；添加tixmlstr.cpp到工程后，编译通过，但运行出现段异常；添加其他tixml*.cpp到工程后，又回到了osgDB::readNodeFile失败这一错误。</p>
+<p>如果不想折腾，只能考虑用Qt自带的xml相关类了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;tinyxml一直很好用，一直以源码方式添加到工程中使用。但如果在工程中使用了一个动态链接库（比如osgEarth）看，并且这个动态链接库也以源码方式使用了tinyxml，可能就不好玩了：编译或者运行时的错误莫名奇妙，让人抓瞎。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="折腾" scheme="https://ogreup.github.io/tags/%E6%8A%98%E8%85%BE/"/>
+    
+      <category term="software" scheme="https://ogreup.github.io/tags/software/"/>
+    
+      <category term="osg" scheme="https://ogreup.github.io/tags/osg/"/>
+    
+  </entry>
+  
+</feed>
